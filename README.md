@@ -3,6 +3,13 @@
 
 # Controls
 
+* Move with the UP, DOWN, LEFT, and RIGHT Arrow Keys
+* Throw Boomerangs with the CTRL Key
+* Enter Tile Edit Mode with the E Key (Java Version Only)
+* Enter Pot Edit Mode with the P Key (Java Version Only)
+* Save changes to map with the S Key (Java Version Only)
+* Quit with the Q Key
+
 # Java Version
 Run Game with the following commands:
 
