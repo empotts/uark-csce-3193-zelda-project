@@ -6,7 +6,7 @@
 # Java Version
 Run Game with the following commands:
 
-```javac Game.java View.java Controller.java Model.java Tile.java Json.java Link.java Boomerang.java Pot.java Sprite.java```
+```javac Game.java```
 
 ```java Game```
 
