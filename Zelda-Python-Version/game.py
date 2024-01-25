@@ -205,7 +205,7 @@ class View():
     def __init__(self,model):
         screen_size = (700,500)
         self.screen = pygame.display.set_mode(screen_size)
-        pygame.display.set_caption('Assignment 8: Python Zelda')
+        pygame.display.set_caption('Zelda Game: Python Version')
         self.model = model
         self.viewX = 0
         self.viewY = 0
@@ -267,7 +267,6 @@ class Controller():
         if self.model.link.y+ 25 < 500:
             self.view.viewY = 0
 
-print("Use the arrow keys to move. Press Esc to quit.")
 pygame.init()
 m = Model()
 v = View(m)
