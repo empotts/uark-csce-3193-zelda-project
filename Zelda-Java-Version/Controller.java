@@ -71,10 +71,10 @@ class Controller implements ActionListener, MouseListener, KeyListener
 			case KeyEvent.VK_DOWN: 		keyDown = true; 	break;
 			case KeyEvent.VK_Q: 		System.exit(0); 	break; //Exits game if Q key or ESC key are pressed
 			case KeyEvent.VK_ESCAPE: 	System.exit(0); 	break;
-			case KeyEvent.VK_W: 		if(view.editMode){view.moveUp();}		break; //Calls methods to shift the screen when WAXD are pressed
-			case KeyEvent.VK_A: 		if(view.editMode){view.moveLeft(); }	break;
-			case KeyEvent.VK_X: 		if(view.editMode){view.moveDown(); }	break;
-			case KeyEvent.VK_D: 		if(view.editMode){view.moveRight(); }	break;
+			//case KeyEvent.VK_W: 		if(view.editMode){view.moveUp();}		break; //Calls methods to shift the screen when WASD are pressed
+			//case KeyEvent.VK_A: 		if(view.editMode){view.moveLeft(); }	break;
+			//case KeyEvent.VK_X: 		if(view.editMode){view.moveDown(); }	break;
+			//case KeyEvent.VK_D: 		if(view.editMode){view.moveRight(); }	break;
 			
 			
 		}
@@ -101,13 +101,13 @@ class Controller implements ActionListener, MouseListener, KeyListener
 				break;
 
 			}
-			case 'l': //Loads data
-			{
-				Json loadData = Json.load("map.json");
-				model.unmarshal(loadData);
-				System.out.println("Load Complete!");
-				break;
-			}
+			//case 'l': //Loads data
+			//{
+			//	Json loadData = Json.load("map.json");
+			//	model.unmarshal(loadData);
+			//	System.out.println("Load Complete!");
+			//	break;
+			//}
 			case 'e':
 			{
 				view.editMode = !view.editMode;

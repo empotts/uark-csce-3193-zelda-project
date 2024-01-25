@@ -20,7 +20,7 @@ public class Game extends JFrame
 		controller = new Controller(model);
 		view = new View(controller,model);
 		model.setView(view);
-		this.setTitle("A5 - Boomerangs and Pots");
+		this.setTitle("Zelda Game Java Version");
 		this.setSize(700, 500);
 		this.setFocusable(true);
 		this.getContentPane().add(view);
