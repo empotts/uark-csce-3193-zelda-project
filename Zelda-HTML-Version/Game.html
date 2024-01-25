@@ -1,0 +1,494 @@
+
+
+<head>
+    <title> Zelda Game!</title>
+</head>
+<body>
+<br>
+<canvas id = "myCanvas" width = "700" height = "500" style = "border:1px solid#00f7ff; background-color: #00f7ff;" ></canvas>
+<script type = "text/javascript">
+//Ethan Potts
+//CSCE 3193 Assignment 7
+//04-24-2023
+//Assignment Description: This assignment creates the Zelda game in HTML using Javascript
+class Sprite
+{
+    constructor(x,y,image_url)
+    {
+        this.x = x;
+        this.y = y;
+        
+
+        this.image = new Image();
+        this.image.src = image_url;
+
+    
+    }
+}
+
+class Link extends Sprite
+{
+    constructor(x,y,url)
+    {
+        super(x,y,url);
+        this.w = 45;
+        this.h = 45;
+        this.prevX = x;
+        this.prevY = y;
+        this.numImages = 50;
+        this.currentImage = 0;
+        this.linkImages = [];
+        this.loadImages();
+        this.direction = 0;
+
+    }
+
+    loadImages()
+    {
+        
+        let pathname = "";
+        let temp = new Image();
+
+        let linkString = "Images/link";
+        let pngString = ".png";
+
+       
+
+        for(let i = 1; i<51; i++)
+        {
+            pathname = "";
+            temp = new Image();
+            if(i <= 9)
+            {
+                
+                pathname = linkString + "0" + i + pngString;
+            }
+            else
+            {
+                pathname = linkString + i + pngString;
+            }
+            temp.src = pathname;
+            //console.log(pathname.toString());
+            this.linkImages.push(temp);
+        }
+
+        
+    }
+
+    update()
+        {
+            
+            this.image = this.linkImages[this.currentImage];
+            //console.log(this.currentImage);
+        }
+
+    cycleDown()
+    {
+        if(this.currentImage < 5 || this.currentImage >= 12)
+		{
+			this.currentImage = 5;
+		}
+		this.currentImage++;
+		this.direction = 0;
+    }
+
+    cycleLeft()
+    {
+        if(this.currentImage < 13 || this.currentImage >= 22)
+		{
+			this.currentImage = 13;
+		}
+		this.currentImage++;
+		this.direction = 1;
+    }
+    cycleRight()
+	{ // index 29 - 37
+		if(this.currentImage < 29 || this.currentImage >= 37)
+		{
+			this.currentImage = 29;
+		}
+		this.currentImage++;
+		this.direction = 3;
+	}
+
+	cycleUp()
+	{ // index 39 - 49
+		if(this.currentImage < 39 || this.currentImage >= 49)
+		{
+			this.currentImage = 39;
+		}
+		this.currentImage++;		
+		this.direction = 2;
+	}
+
+}
+
+class Tile extends Sprite
+{
+    constructor(x,y,url)
+    {
+        super(x,y,url);
+        this.w = 50;
+        this.h = 50;
+
+    }
+
+    update()
+    {
+
+    }
+
+    
+}
+
+class Boomerang extends Sprite
+{
+    constructor(x,y,url,direction)
+    {
+        super(x,y,url);
+        this.w = 20;
+        this.h = 20;
+        this.isActive = true;
+        this.speed = 11;
+        this.direction = direction;
+    }
+    update()
+    {
+        if(this.direction == 0)
+        {
+            this.y += this.speed;
+        }
+        if(this.direction == 1)
+        {
+            this.x -= this.speed;
+        }
+        if(this.direction == 2)
+        {
+            this.y -= this.speed;
+        }
+        if(this.direction == 3)
+        {
+            this.x += this.speed;
+        }
+
+    }
+
+}
+
+class Pot extends Sprite
+{
+    constructor(x,y,url)
+    {
+        super(x,y,url);
+        this.w = 30;
+        this.h = 30;
+        this.sent = false;
+        this.speed = 11;
+        this.isBroke = false;
+        this.framesLeft = 20;
+        this.direction;
+    }
+
+
+    sendPot(direction)
+    {
+        this.sent = true;
+        this.direction = direction;
+        if(direction == 0)
+        {
+            this.y += this.speed;
+        }
+        if(direction == 1)
+        {
+            this.x -= this.speed;
+        }
+        if(direction == 2)
+        {
+            this.y -= this.speed;
+        }
+        if(direction == 3)
+        {
+            this.x += this.speed;
+        }
+    }
+
+    update()
+    {
+        if(this.isBroke)
+        {
+            let broke = new Image();
+            this.image.src = "Images/pot_broken.png"
+            
+        }
+        if(this.isBroke)
+        {
+            this.framesLeft--;
+            this.speed = 0;
+        }
+
+        if(this.sent)
+        {
+            if(this.direction == 0)
+            {
+                this.y += this.speed;
+            }
+            if(this.direction == 1)
+            {
+                this.x -= this.speed;
+            }
+            if(this.direction == 2)
+            {
+                this.y -= this.speed;
+            }
+            if(this.direction == 3)
+            {
+                this.x += this.speed;
+            }
+      }
+    }
+}
+
+
+
+class Controller
+{
+    constructor(model, view)
+	{
+		this.model = model;
+		this.view = view;
+		this.keyRight = false;
+		this.keyLeft = false;
+		this.keyUp = false;
+		this.keyDown = false;
+		let self = this;
+		view.canvas.addEventListener('click', function(event) { self.onClick(event); });
+		document.addEventListener('keydown', function(event) { self.keyDownMethod(event); }, false);
+		document.addEventListener('keyup', function(event) { self.keyUpMethod(event); }, false);
+	}
+
+    onClick(event)
+	{
+		
+	}
+
+	keyDownMethod(event)
+	{
+		if(event.keyCode == 39) this.keyRight = true;
+		else if(event.keyCode == 37) this.keyLeft = true;
+		else if(event.keyCode == 38) this.keyUp = true;
+		else if(event.keyCode == 40) this.keyDown = true;
+        else if(event.keyCode == 17) this.model.addBoomer();
+	}
+
+	keyUpMethod(event)
+	{
+		if(event.keyCode == 39) this.keyRight = false;
+		else if(event.keyCode == 37) this.keyLeft = false;
+		else if(event.keyCode == 38) this.keyUp = false;
+		else if(event.keyCode == 40) this.keyDown = false;
+	}
+
+	update()
+	{
+        if(this.keyRight == true) 	{this.model.link.x+=10; this.model.link.cycleRight();}
+		if(this.keyLeft == true) 	{this.model.link.x-=10; this.model.link.cycleLeft();}
+		if(this.keyDown == true) 	{this.model.link.y+=10;  if(!this.keyRight && !this.keyLeft)this.model.link.cycleDown();}
+		if(this.keyUp == true) 		{this.model.link.y-=10;  if(!this.keyRight && !this.keyLeft)this.model.link.cycleUp();}
+
+
+		if(this.model.link.x+this.model.link.w/2>700)
+		{
+			this.view.viewX = 700;
+		}
+		if(this.model.link.x+this.model.link.w/2<700)
+		{
+			this.view.viewX = 0;
+		}
+		if(this.model.link.y+this.model.link.h/2>500)
+		{
+			this.view.viewY = 500;
+		}
+		if(this.model.link.y+this.model.link.h/2<500)
+		{
+			this.view.viewY = 0;
+		}
+	}
+}
+
+class View
+{
+    constructor(model)
+	{
+		this.model = model;
+		this.canvas = document.getElementById("myCanvas");
+        this.viewX = 0;
+        this.viewY = 0;
+	}
+
+	update()
+	{
+		let ctx = this.canvas.getContext("2d");
+		ctx.clearRect(0, 0, 1400, 1000);
+		for(let i = 0; i < this.model.sprites.length; i++)
+		{
+			let sprite = this.model.sprites[i];
+			ctx.drawImage(sprite.image, sprite.x-this.viewX, sprite.y-this.viewY,sprite.w,sprite.h);
+		}
+	}
+
+    
+}
+
+class Model
+{
+    constructor()
+    {
+        this.sprites = [];
+        let tileURL = "Images/tile.jpg";
+        let potURL = "Images/pot.png";
+        this.sprites.push(new Tile( 0, 0,tileURL)); this.sprites.push(new Tile( 50, 0,tileURL)); this.sprites.push(new Tile( 100, 0,tileURL)); this.sprites.push(new Tile( 150, 0,tileURL)); this.sprites.push(new Tile( 200, 0,tileURL)); this.sprites.push(new Tile( 250, 0,tileURL)); this.sprites.push(new Tile( 300, 0,tileURL)); this.sprites.push(new Tile( 350, 0,tileURL)); this.sprites.push(new Tile( 400, 0,tileURL)); this.sprites.push(new Tile( 450, 0,tileURL)); this.sprites.push(new Tile( 500, 0,tileURL)); this.sprites.push(new Tile( 550, 0,tileURL)); this.sprites.push(new Tile( 600, 0,tileURL)); this.sprites.push(new Tile( 650, 0,tileURL)); this.sprites.push(new Tile( 0, 50,tileURL)); this.sprites.push(new Tile( 0, 100,tileURL)); this.sprites.push(new Tile( 0, 150,tileURL)); this.sprites.push(new Tile( 0, 200,tileURL)); this.sprites.push(new Tile( 0, 250,tileURL)); this.sprites.push(new Tile( 0, 350,tileURL)); this.sprites.push(new Tile( 0, 300,tileURL)); this.sprites.push(new Tile( 0, 400,tileURL)); this.sprites.push(new Tile( 0, 450,tileURL)); this.sprites.push(new Tile( 0, 500,tileURL)); this.sprites.push(new Tile( 0, 550,tileURL)); this.sprites.push(new Tile( 0, 600,tileURL)); this.sprites.push(new Tile( 0, 650,tileURL)); this.sprites.push(new Tile( 0, 700,tileURL)); this.sprites.push(new Tile( 0, 750,tileURL)); this.sprites.push(new Tile( 0, 800,tileURL)); this.sprites.push(new Tile( 0, 850,tileURL)); this.sprites.push(new Tile( 0, 900,tileURL)); this.sprites.push(new Tile( 0, 950,tileURL)); this.sprites.push(new Tile( 50, 950,tileURL)); this.sprites.push(new Tile( 100, 950,tileURL)); this.sprites.push(new Tile( 150, 950,tileURL)); this.sprites.push(new Tile( 200, 950,tileURL)); this.sprites.push(new Tile( 250, 950,tileURL)); this.sprites.push(new Tile( 300, 950,tileURL)); this.sprites.push(new Tile( 350, 950,tileURL)); this.sprites.push(new Tile( 400, 950,tileURL)); this.sprites.push(new Tile( 450, 950,tileURL)); this.sprites.push(new Tile( 500, 950,tileURL)); this.sprites.push(new Tile( 550, 950,tileURL)); this.sprites.push(new Tile( 600, 950,tileURL)); this.sprites.push(new Tile( 650, 950,tileURL)); this.sprites.push(new Tile( 650, 900,tileURL)); this.sprites.push(new Tile( 600, 900,tileURL)); this.sprites.push(new Tile( 500, 900,tileURL)); this.sprites.push(new Tile( 550, 900,tileURL)); this.sprites.push(new Tile( 450, 900,tileURL)); this.sprites.push(new Tile( 350, 900,tileURL)); this.sprites.push(new Tile( 400, 900,tileURL)); this.sprites.push(new Tile( 300, 900,tileURL)); this.sprites.push(new Tile( 200, 900,tileURL)); this.sprites.push(new Tile( 250, 900,tileURL)); this.sprites.push(new Tile( 150, 900,tileURL)); this.sprites.push(new Tile( 100, 900,tileURL)); this.sprites.push(new Tile( 50, 900,tileURL)); this.sprites.push(new Tile( 700, 950,tileURL)); this.sprites.push(new Tile( 750, 950,tileURL)); this.sprites.push(new Tile( 850, 950,tileURL)); this.sprites.push(new Tile( 1050, 950,tileURL)); this.sprites.push(new Tile( 1000, 950,tileURL)); this.sprites.push(new Tile( 900, 950,tileURL)); this.sprites.push(new Tile( 950, 950,tileURL)); this.sprites.push(new Tile( 800, 950,tileURL)); this.sprites.push(new Tile( 700, 900,tileURL)); this.sprites.push(new Tile( 750, 900,tileURL)); this.sprites.push(new Tile( 800, 900,tileURL)); this.sprites.push(new Tile( 850, 900,tileURL)); this.sprites.push(new Tile( 900, 900,tileURL)); this.sprites.push(new Tile( 1000, 900,tileURL)); this.sprites.push(new Tile( 950, 900,tileURL)); this.sprites.push(new Tile( 1050, 900,tileURL)); this.sprites.push(new Tile( 1100, 900,tileURL)); this.sprites.push(new Tile( 1100, 950,tileURL)); this.sprites.push(new Tile( 1150, 900,tileURL)); this.sprites.push(new Tile( 1150, 950,tileURL)); this.sprites.push(new Tile( 1200, 900,tileURL)); this.sprites.push(new Tile( 1200, 950,tileURL)); this.sprites.push(new Tile( 1250, 900,tileURL)); this.sprites.push(new Tile( 1250, 950,tileURL)); this.sprites.push(new Tile( 1300, 900,tileURL)); this.sprites.push(new Tile( 1300, 950,tileURL)); this.sprites.push(new Tile( 1350, 950,tileURL)); this.sprites.push(new Tile( 1350, 900,tileURL)); this.sprites.push(new Tile( 1350, 850,tileURL)); this.sprites.push(new Tile( 1350, 800,tileURL)); this.sprites.push(new Tile( 1350, 750,tileURL)); this.sprites.push(new Tile( 1350, 700,tileURL)); this.sprites.push(new Tile( 1350, 600,tileURL)); this.sprites.push(new Tile( 1350, 650,tileURL)); this.sprites.push(new Tile( 1350, 550,tileURL)); this.sprites.push(new Tile( 1350, 500,tileURL)); this.sprites.push(new Tile( 1350, 450,tileURL)); this.sprites.push(new Tile( 1350, 400,tileURL)); this.sprites.push(new Tile( 1350, 350,tileURL)); this.sprites.push(new Tile( 1350, 300,tileURL)); this.sprites.push(new Tile( 1350, 250,tileURL)); this.sprites.push(new Tile( 1350, 200,tileURL)); this.sprites.push(new Tile( 1350, 150,tileURL)); this.sprites.push(new Tile( 1350, 100,tileURL)); this.sprites.push(new Tile( 1350, 50,tileURL)); this.sprites.push(new Tile( 1350, 0,tileURL)); this.sprites.push(new Tile( 1250, 0,tileURL)); this.sprites.push(new Tile( 1300, 0,tileURL)); this.sprites.push(new Tile( 1200, 0,tileURL)); this.sprites.push(new Tile( 1150, 0,tileURL)); this.sprites.push(new Tile( 1050, 0,tileURL)); this.sprites.push(new Tile( 1100, 0,tileURL)); this.sprites.push(new Tile( 1000, 0,tileURL)); this.sprites.push(new Tile( 900, 0,tileURL)); this.sprites.push(new Tile( 950, 0,tileURL)); this.sprites.push(new Tile( 850, 0,tileURL)); this.sprites.push(new Tile( 800, 0,tileURL)); this.sprites.push(new Tile( 750, 0,tileURL)); this.sprites.push(new Tile( 700, 0,tileURL)); this.sprites.push(new Tile( 50, 400,tileURL)); this.sprites.push(new Tile( 100, 400,tileURL)); this.sprites.push(new Tile( 150, 400,tileURL)); this.sprites.push(new Tile( 200, 400,tileURL)); this.sprites.push(new Tile( 250, 400,tileURL)); this.sprites.push(new Tile( 400, 400,tileURL)); this.sprites.push(new Tile( 450, 400,tileURL)); this.sprites.push(new Tile( 500, 400,tileURL)); this.sprites.push(new Tile( 550, 400,tileURL)); this.sprites.push(new Tile( 600, 400,tileURL)); this.sprites.push(new Tile( 650, 400,tileURL)); this.sprites.push(new Tile( 650, 350,tileURL)); this.sprites.push(new Tile( 650, 300,tileURL)); this.sprites.push(new Tile( 650, 50,tileURL)); this.sprites.push(new Tile( 650, 100,tileURL)); this.sprites.push(new Tile( 700, 50,tileURL)); this.sprites.push(new Tile( 700, 100,tileURL)); this.sprites.push(new Tile( 700, 300,tileURL)); this.sprites.push(new Tile( 700, 350,tileURL)); this.sprites.push(new Tile( 700, 400,tileURL)); this.sprites.push(new Tile( 750, 400,tileURL)); this.sprites.push(new Tile( 50, 450,tileURL)); this.sprites.push(new Tile( 100, 450,tileURL)); this.sprites.push(new Tile( 150, 450,tileURL)); this.sprites.push(new Tile( 200, 450,tileURL)); this.sprites.push(new Tile( 250, 450,tileURL)); this.sprites.push(new Tile( 400, 450,tileURL)); this.sprites.push(new Tile( 450, 450,tileURL)); this.sprites.push(new Tile( 500, 450,tileURL)); this.sprites.push(new Tile( 550, 450,tileURL)); this.sprites.push(new Tile( 600, 450,tileURL)); this.sprites.push(new Tile( 650, 450,tileURL)); this.sprites.push(new Tile( 700, 450,tileURL)); this.sprites.push(new Tile( 750, 450,tileURL)); this.sprites.push(new Tile( 800, 450,tileURL)); this.sprites.push(new Tile( 800, 400,tileURL)); this.sprites.push(new Tile( 850, 450,tileURL)); this.sprites.push(new Tile( 850, 400,tileURL)); this.sprites.push(new Tile( 900, 400,tileURL)); this.sprites.push(new Tile( 900, 450,tileURL)); this.sprites.push(new Tile( 950, 450,tileURL)); this.sprites.push(new Tile( 950, 400,tileURL)); this.sprites.push(new Tile( 1100, 400,tileURL)); this.sprites.push(new Tile( 1100, 450,tileURL)); this.sprites.push(new Tile( 1150, 400,tileURL)); this.sprites.push(new Tile( 1150, 450,tileURL)); this.sprites.push(new Tile( 1200, 400,tileURL)); this.sprites.push(new Tile( 1200, 450,tileURL)); this.sprites.push(new Tile( 1250, 400,tileURL)); this.sprites.push(new Tile( 1250, 450,tileURL)); this.sprites.push(new Tile( 1300, 400,tileURL)); this.sprites.push(new Tile( 1300, 450,tileURL)); this.sprites.push(new Tile( 1300, 500,tileURL)); this.sprites.push(new Tile( 1250, 500,tileURL)); this.sprites.push(new Tile( 1200, 500,tileURL)); this.sprites.push(new Tile( 1150, 500,tileURL)); this.sprites.push(new Tile( 1100, 500,tileURL)); this.sprites.push(new Tile( 950, 500,tileURL)); this.sprites.push(new Tile( 900, 500,tileURL)); this.sprites.push(new Tile( 850, 500,tileURL)); this.sprites.push(new Tile( 700, 500,tileURL)); this.sprites.push(new Tile( 800, 500,tileURL)); this.sprites.push(new Tile( 750, 500,tileURL)); this.sprites.push(new Tile( 650, 850,tileURL)); this.sprites.push(new Tile( 650, 800,tileURL)); this.sprites.push(new Tile( 50, 500,tileURL)); this.sprites.push(new Tile( 150, 500,tileURL)); this.sprites.push(new Tile( 100, 500,tileURL)); this.sprites.push(new Tile( 200, 500,tileURL)); this.sprites.push(new Tile( 250, 500,tileURL)); this.sprites.push(new Tile( 400, 500,tileURL)); this.sprites.push(new Tile( 450, 500,tileURL)); this.sprites.push(new Tile( 500, 500,tileURL)); this.sprites.push(new Tile( 550, 500,tileURL)); this.sprites.push(new Tile( 600, 500,tileURL)); this.sprites.push(new Tile( 650, 500,tileURL)); this.sprites.push(new Tile( 650, 550,tileURL)); this.sprites.push(new Tile( 650, 600,tileURL)); this.sprites.push(new Tile( 700, 550,tileURL)); this.sprites.push(new Tile( 700, 600,tileURL)); this.sprites.push(new Tile( 700, 850,tileURL)); this.sprites.push(new Tile( 700, 800,tileURL)); this.sprites.push(new Tile( 950, 150,tileURL)); this.sprites.push(new Tile( 950, 200,tileURL)); this.sprites.push(new Tile( 950, 250,tileURL)); this.sprites.push(new Tile( 1000, 250,tileURL)); this.sprites.push(new Tile( 1000, 200,tileURL)); this.sprites.push(new Tile( 1000, 150,tileURL)); this.sprites.push(new Tile( 1050, 150,tileURL)); this.sprites.push(new Tile( 1050, 200,tileURL)); this.sprites.push(new Tile( 1050, 250,tileURL)); this.sprites.push(new Tile( 1100, 250,tileURL)); this.sprites.push(new Tile( 1100, 200,tileURL)); this.sprites.push(new Tile( 1100, 150,tileURL)); this.sprites.push(new Tile( 1300, 850,tileURL)); this.sprites.push(new Tile( 1300, 800,tileURL)); this.sprites.push(new Tile( 1250, 800,tileURL)); this.sprites.push(new Tile( 1250, 850,tileURL)); this.sprites.push(new Tile( 1200, 850,tileURL)); this.sprites.push(new Tile( 1250, 750,tileURL)); this.sprites.push(new Tile( 1300, 700,tileURL)); this.sprites.push(new Tile( 1300, 750,tileURL)); this.sprites.push(new Tile( 750, 800,tileURL)); this.sprites.push(new Tile( 750, 850,tileURL)); this.sprites.push(new Tile( 800, 850,tileURL)); this.sprites.push(new Tile( 750, 600,tileURL)); this.sprites.push(new Tile( 800, 550,tileURL)); this.sprites.push(new Tile( 750, 550,tileURL)); this.sprites.push(new Tile( 1250, 550,tileURL)); this.sprites.push(new Tile( 1300, 600,tileURL)); this.sprites.push(new Tile( 1300, 550,tileURL)); this.sprites.push(new Tile( 1300, 650,tileURL)); this.sprites.push(new Tile( 1200, 550,tileURL)); this.sprites.push(new Tile( 1250, 600,tileURL)); this.sprites.push(new Tile( 1250, 650,tileURL)); this.sprites.push(new Tile( 1250, 700,tileURL)); this.sprites.push(new Tile( 850, 550,tileURL)); this.sprites.push(new Tile( 800, 600,tileURL)); this.sprites.push(new Tile( 800, 800,tileURL)); this.sprites.push(new Tile( 850, 850,tileURL)); this.sprites.push(new Tile( 1000, 700,tileURL)); this.sprites.push(new Tile( 1000, 750,tileURL)); this.sprites.push(new Tile( 1050, 750,tileURL)); this.sprites.push(new Tile( 1050, 700,tileURL)); this.sprites.push(new Tile( 1000, 650,tileURL)); this.sprites.push(new Tile( 1050, 650,tileURL)); this.sprites.push(new Tile( 250, 550,tileURL)); this.sprites.push(new Tile( 250, 600,tileURL)); this.sprites.push(new Tile( 250, 850,tileURL)); this.sprites.push(new Tile( 250, 800,tileURL)); this.sprites.push(new Tile( 200, 800,tileURL)); this.sprites.push(new Tile( 200, 600,tileURL)); this.sprites.push(new Tile( 400, 550,tileURL)); this.sprites.push(new Tile( 400, 600,tileURL)); this.sprites.push(new Tile( 450, 600,tileURL)); this.sprites.push(new Tile( 400, 850,tileURL)); this.sprites.push(new Tile( 400, 800,tileURL)); this.sprites.push(new Tile( 450, 800,tileURL)); this.sprites.push(new Tile( 250, 200,tileURL)); this.sprites.push(new Tile( 300, 200,tileURL)); this.sprites.push(new Tile( 350, 200,tileURL)); this.sprites.push(new Tile( 400, 200,tileURL)); this.sprites.push(new Tile( 300, 150,tileURL)); this.sprites.push(new Tile( 350, 150,tileURL)); this.sprites.push(new Tile( 300, 250,tileURL)); this.sprites.push(new Tile( 350, 250,tileURL));
+        this.sprites.push(new Pot( 360, 360,potURL)); this.sprites.push(new Pot( 360, 310,potURL)); this.sprites.push(new Pot( 310, 360,potURL)); this.sprites.push(new Pot( 310, 310,potURL)); 
+        this.link = new Link(100,100,"Images/link01.png");
+        this.sprites.push(this.link);
+        //add pots
+    }
+
+    update()
+    {
+        for(let i = 0; i<this.sprites.length; i++)
+        {
+            this.sprites[i].update();
+            
+
+            for(let j = 0; j< this.sprites.length; j++)
+            {
+                if(this.sprites[i] instanceof Link && this.sprites[j] instanceof Tile)
+                {
+					if(this.collision(this.sprites[i],this.sprites[j]))
+                    {			
+						this.link.x = this.link.prevX;
+                        this.link.y = this.link.prevY;
+					}
+                    
+				}
+                if(this.sprites[i] instanceof Link && this.sprites[j] instanceof Pot)
+                {
+					if(this.collision(this.sprites[i],this.sprites[j]))
+                    {	
+                        this.sprites[j].sendPot(this.link.direction);
+					}
+                    
+				}
+                if(this.sprites[i] instanceof Boomerang && this.sprites[j] instanceof Pot)
+                {
+					if(this.collision(this.sprites[i],this.sprites[j]))
+                    {	
+                        this.sprites[j].isBroke = true;
+                        this.sprites[i].isActive = false;
+					}
+                    
+				}
+                if(this.sprites[i] instanceof Tile && this.sprites[j] instanceof Pot)
+                {
+					if(this.collision(this.sprites[i],this.sprites[j]))
+                    {	
+                        this.sprites[j].isBroke = true;
+					}
+                    
+				}
+                if(this.sprites[i] instanceof Tile && this.sprites[j] instanceof Boomerang)
+                {
+					if(this.collision(this.sprites[i],this.sprites[j]))
+                    {	
+                        //console.log("HIT WALL");
+                        this.sprites[j].isActive = false;
+                        //console.log("IS INACTIVE");
+					}
+                    
+				}
+            }
+
+
+            if(this.sprites[i] instanceof Pot)
+            {
+                if(this.sprites[i].framesLeft<0)
+                {
+                    this.sprites.splice(i,1);
+                    //console.log("POT DELETED");
+                }
+            }
+            if(this.sprites[i] instanceof Boomerang)
+            {
+                if(!this.sprites[i].isActive)
+                {
+                    //console.log("ABOUT TO DELETE");
+                    this.sprites.splice(i,1);
+                    //console.log("DELETED");
+                }
+            }
+
+            
+
+        }
+
+        this.link.prevX = this.link.x;
+        this.link.prevY = this.link.y;
+    }
+    collision(a, b)
+    {
+		this.a = a;
+		this.b = b;
+		this.aR = this.a.x + this.a.w;
+		this.aL = this.a.x;
+		this.bR = this.b.x + this.b.w;
+		this.bL = this.b.x;
+		this.aU = this.a.y;
+		this.aD = this.a.y + this.a.h;
+		this.bU = this.b.y;
+		this.bD= this.b.y + this.b.h;
+		
+		if(this.aR < this.bL)
+			return false;
+		if(this.aL > this.bR)
+			return false;
+		if(this.aD < this.bU)
+			return false;
+		if(this.aU>this.bD)
+			return false;
+		return true; 
+   
+        }
+
+    addBoomer(direction)
+    {
+        let boomer = new Boomerang(this.link.x+15,this.link.y+15,"Images/boomerang1.png",this.link.direction);
+        this.sprites.push(boomer);
+    }
+ 
+}
+class Game
+{
+    constructor()
+	{
+		this.model = new Model();
+		this.view = new View(this.model);
+		this.controller = new Controller(this.model, this.view);
+	}
+
+	onTimer()
+	{
+		this.controller.update();
+		this.model.update();
+		this.view.update();
+	}
+}
+
+
+let game = new Game();
+let timer = setInterval(function() { game.onTimer(); }, 40);
+
+
+
+
+</script>
+</body>
