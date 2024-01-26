@@ -1,6 +1,6 @@
 # uark-csce-3193-zelda-project
 ## 2D Game Replica of the Original Zelda Game
-<img width="701" alt="Zelda-Game-Screenshot" src="https://github.com/empotts/uark-csce-3193-zelda-project/assets/108480273/6323dc69-e107-4356-9d7c-ed6a9fb1173f">
+<img src="https://github.com/empotts/uark-csce-3193-zelda-project/assets/108480273/54adfb9a-7ad6-4778-8ee3-bfac0505027e" width="500" />
 
 # Controls
 ## Movement and Items
