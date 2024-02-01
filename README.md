@@ -22,9 +22,12 @@ Run Game with the following commands:
 ```java Game```
 
 # HTML Version
-Run Game by Opening: 
+Run Game here: https://empotts.github.io/uark-csce-3193-zelda-project/
+
+or by opening:
 
 ```game.html```
+
 
 # Python Version
 Run Game by running 
